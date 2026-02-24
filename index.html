@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+<title>CCG BUNKER — RESTRICTED ACCESS TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- WORLD CANVAS -->
+<canvas id="worldCanvas" class="world-canvas"></canvas>
+<div class="crt-glass"></div>
+<div class="scanlines" id="elScanlines"></div>
+<div class="chromatic" id="elChromatic"></div>
+<div class="vignette-ring"></div>
+<div class="flicker" id="elFlicker"></div>
+<div id="cursorGlow" class="cursor-glow"></div>
+
+<!-- NOTIFICATION SYSTEM -->
+<div id="notifStack" class="notif-stack"></div>
+
+<!-- GLOBAL TOP BAR -->
+<header class="global-bar" id="globalBar">
+  <div class="gb-left">
+    <div class="gb-logo">
+      <span class="gb-diamond">◈</span>
+      <span class="gb-name">CCG<span class="gb-thin">BUNKER</span></span>
+      <span class="gb-ver">OS v5.1</span>
+    </div>
+    <div class="gb-div"></div>
+    <span class="pill pill-green">● UPLINK</span>
+    <span class="pill pill-blue">⬡ AES-4096</span>
+    <span class="pill pill-amber">▲ THREAT: MOD</span>
+  </div>
+  <div class="gb-marquee-wrap"><div class="gb-marquee" id="gbMarquee"></div></div>
+  <div class="gb-right">
+    <span class="gb-clock" id="gbClock">--:--:--</span>
+    <div class="gb-div"></div>
+    <span class="gb-node">TRB SEC // CCG-BNK</span>
+  </div>
+</header>
+
+<!-- ═══════════ BOOT SCREEN ═══════════ -->
+<div id="scBoot" class="screen active">
+  <div class="boot-scene">
+    <div class="boot-hero">
+      <div class="boot-rings">
+        <div class="br br1"></div><div class="br br2"></div><div class="br br3"></div>
+        <div class="br-center">
+          <svg viewBox="0 0 120 120" width="140" height="140" class="boot-svg">
+            <defs>
+              <linearGradient id="hGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#00d2ff"/>
+                <stop offset="50%" stop-color="#7b2ff7"/>
+                <stop offset="100%" stop-color="#ff6b35"/>
+              </linearGradient>
+              <filter id="gf"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+            </defs>
+            <polygon points="60,4 112,32 112,88 60,116 8,88 8,32"
+              fill="none" stroke="url(#hGrad)" stroke-width="2" filter="url(#gf)"
+              stroke-dasharray="380" stroke-dashoffset="380" class="hex-stroke"/>
+            <polygon points="60,18 98,40 98,80 60,102 22,80 22,40"
+              fill="rgba(0,210,255,0.04)" stroke="rgba(0,210,255,0.15)" stroke-width="0.8"/>
+            <text x="60" y="53" text-anchor="middle" class="bsvg-ccg">CCG</text>
+            <text x="60" y="68" text-anchor="middle" class="bsvg-bunker">BUNKER</text>
+            <text x="60" y="81" text-anchor="middle" class="bsvg-class">CLASSIFIED</text>
+            <text x="60" y="92" text-anchor="middle" class="bsvg-trb">TRB SEC</text>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="boot-panel">
+      <div class="bpanel-hdr">
+        <span>CCG BUNKER SYSTEM BOOT</span>
+        <span id="bootTimer" class="mono-sm">T+0.000s</span>
+      </div>
+      <div id="bootLog" class="boot-log"></div>
+      <div class="boot-bars">
+        <div class="bb-row"><span>KERNEL</span><div class="bbt"><div id="bb0" class="bbf" style="--c:#00d2ff"></div></div><span id="bp0" class="bpct">0%</span></div>
+        <div class="bb-row"><span>SECURITY</span><div class="bbt"><div id="bb1" class="bbf" style="--c:#7b2ff7"></div></div><span id="bp1" class="bpct">0%</span></div>
+        <div class="bb-row"><span>DECODE</span><div class="bbt"><div id="bb2" class="bbf" style="--c:#ff6b35"></div></div><span id="bp2" class="bpct">0%</span></div>
+        <div class="bb-row"><span>NETWORK</span><div class="bbt"><div id="bb3" class="bbf" style="--c:#00ff88"></div></div><span id="bp3" class="bpct">0%</span></div>
+      </div>
+      <div id="bootStatus" class="boot-statusline">INITIALIZING<span class="bdots"></span></div>
+    </div>
+
+    <div class="boot-footer">
+      <span>TRB SECURITY DIVISION</span><span>◈</span><span>CCG PRODUCTIONS</span>
+      <span>◈</span><span>BIOS v3.1.4-SEC</span><span>◈</span><span>SN: CCG-BNK-0077</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ AUTH SCREEN ═══════════ -->
+<div id="scAuth" class="screen">
+  <canvas id="authBg" class="auth-bg-canvas"></canvas>
+  <div class="auth-layout">
+
+    <div class="auth-side-panel">
+      <div class="asp-brand">
+        <div class="asp-initials">TRB</div>
+        <div class="asp-name">SECURITY DIVISION</div>
+        <div class="asp-line"></div>
+      </div>
+      <div class="asp-data">
+        <div class="asp-row"><span>TERMINAL</span><span class="blue-text">CCG-BNK-MAIN</span></div>
+        <div class="asp-row"><span>DEPTH</span><span>SUBLEVEL 3</span></div>
+        <div class="asp-row"><span>PROTOCOL</span><span>SL-7/SECURE</span></div>
+        <div class="asp-row"><span>ENCRYPT</span><span>AES-4096</span></div>
+        <div class="asp-row"><span>SECTOR</span><span>FOREST GRID 7</span></div>
+        <div class="asp-row"><span>CLEARANCE</span><span class="warn-text">REQUIRED</span></div>
+      </div>
+      <canvas id="bioCanvas" class="asp-canvas" width="160" height="80"></canvas>
+      <div class="asp-canvas-label">BIOMETRIC SCAN</div>
+      <div class="asp-warn">⚠ ALL SESSIONS MONITORED<br/>TRB SECURITY — 24H</div>
+    </div>
+
+    <div class="auth-main-panel">
+      <div class="amp-corners">
+        <div class="amc tl"></div><div class="amc tr"></div>
+        <div class="amc bl"></div><div class="amc br"></div>
+      </div>
+      <div class="amp-header">
+        <div class="amp-lock-wrap">
+          <svg viewBox="0 0 64 72" width="52" class="amp-lock">
+            <defs><linearGradient id="lg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#00d2ff"/><stop offset="100%" stop-color="#7b2ff7"/></linearGradient></defs>
+            <rect x="8" y="32" width="48" height="36" rx="4" fill="rgba(0,210,255,0.06)" stroke="url(#lg2)" stroke-width="2.2" class="lock-body"/>
+            <path d="M18,32 V20 a14,14 0 0 1 28,0 V32" fill="none" stroke="url(#lg2)" stroke-width="2.2" class="lock-arch"/>
+            <circle cx="32" cy="50" r="5" fill="url(#lg2)" class="lock-core"/>
+            <line x1="32" y1="55" x2="32" y2="63" stroke="url(#lg2)" stroke-width="2.5"/>
+          </svg>
+        </div>
+        <div>
+          <div class="amp-title">AUTHENTICATION REQUIRED</div>
+          <div class="amp-sub">CCG BUNKER — RESTRICTED TERMINAL</div>
+          <div class="amp-node">TRB SECURITY DIVISION // NODE: CCG-BNK-MAIN</div>
+        </div>
+      </div>
+
+      <div class="amp-sep"></div>
+
+      <div class="amp-form">
+        <div class="amf-top-row">
+          <span class="amf-label">ACCESS CODE</span>
+          <span class="amf-att">ATTEMPTS: <b id="authAttempts">0</b>/5</span>
+        </div>
+        <div class="amf-input-wrap" id="authWrap">
+          <span class="amf-prefix">▸</span>
+          <input type="password" id="authInput" class="amf-input"
+            maxlength="20" autocomplete="off" placeholder="ENTER OPERATIVE CODE"/>
+          <div class="amf-loader" id="amfLoader">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <button class="amf-btn" id="authBtn" onclick="checkPassword()">
+          <span>AUTHENTICATE</span><span>▶▶</span>
+        </button>
+        <div id="authMsg" class="amf-msg"></div>
+      </div>
+
+      <div class="amp-sep"></div>
+
+      <div class="amp-indicators">
+        <div class="ami"><div class="ami-dot green-dot"></div>UPLINK</div>
+        <div class="ami"><div class="ami-dot blue-dot"></div>ENCRYPTED</div>
+        <div class="ami"><div class="ami-dot pulse-dot"></div>AWAITING</div>
+        <div class="ami"><div class="ami-dot amber-dot"></div>THREAT:MOD</div>
+      </div>
+    </div>
+
+    <div class="auth-side-panel">
+      <div class="asp-brand">
+        <div class="asp-initials" style="font-size:22px">CCG</div>
+        <div class="asp-name">PRODUCTIONS</div>
+        <div class="asp-line"></div>
+      </div>
+      <div class="asp-data">
+        <div class="asp-row"><span>EVENT</span><span class="purple-text">ACTIVE</span></div>
+        <div class="asp-row"><span>PLAYERS</span><span>50+</span></div>
+        <div class="asp-row"><span>CODES</span><span class="green-text">HIDDEN</span></div>
+        <div class="asp-row"><span>REWARDS</span><span class="green-text">LIVE</span></div>
+        <div class="asp-row"><span>SECRETS</span><span class="orange-text">MANY</span></div>
+        <div class="asp-row"><span>STATUS</span><span id="authStatus" class="warn-text blink-text">LOCKED</span></div>
+      </div>
+      <canvas id="waveCanvas" class="asp-canvas" width="160" height="80"></canvas>
+      <div class="asp-canvas-label">SIGNAL MONITOR</div>
+      <div class="asp-warn">⚠ UNAUTHORIZED ACCESS<br/>IS A FEDERAL OFFENSE</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ OS SCREEN ═══════════ -->
+<div id="scOS" class="screen">
+
+  <div class="ostb">
+    <div class="ostb-l">
+      <span class="ostb-logo">◈ CCG<span class="ostb-thin">BUNKER</span></span>
+      <div class="ostb-sep"></div>
+      <span class="ostb-tag">OPERATIVE: <b class="blue-text">ALPHA-AGENT</b></span>
+      <div class="ostb-sep"></div>
+      <span class="ostb-tag">CLEARANCE: <b class="grad-text">ALPHA</b></span>
+      <div class="ostb-sep"></div>
+      <span class="ostb-tag">UPTIME: <span id="osUptime" class="mono-sm">00:00:00</span></span>
+    </div>
+    <div class="ostb-c">
+      <span class="td-lbl warn-text blink-slow">▲ TRB THREAT: MODERATE</span>
+      <div class="td-segs">
+        <div class="tds active" style="--c:#00ff88"></div>
+        <div class="tds active" style="--c:#aaff00"></div>
+        <div class="tds active" style="--c:#ffcc00"></div>
+        <div class="tds active tds-pulse" style="--c:#ff8800"></div>
+        <div class="tds" style="--c:#ff2222"></div>
+      </div>
+    </div>
+    <div class="ostb-r">
+      <span class="ostb-clock mono-sm" id="osClock"></span>
+      <button class="os-lock-btn" onclick="lockSystem()">⏻ LOCK</button>
+    </div>
+  </div>
+
+  <div class="os-body">
+    <nav class="os-dock">
+      <div class="dk-lbl">APPS</div>
+      <div class="dk-btn active" id="dk-dashboard" onclick="openApp('dashboard')">
+        <span class="dk-ico">⬡</span><span class="dk-txt">Dashboard</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-btn" id="dk-terminal" onclick="openApp('terminal')">
+        <span class="dk-ico">▶_</span><span class="dk-txt">Terminal</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-btn" id="dk-map" onclick="openApp('map')">
+        <span class="dk-ico">◎</span><span class="dk-txt">Sector Map</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-btn" id="dk-intel" onclick="openApp('intel')">
+        <span class="dk-ico">◈</span><span class="dk-txt">Intel File</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-btn" id="dk-comms" onclick="openApp('comms')">
+        <span class="dk-ico">⌘</span><span class="dk-txt">Comms</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-btn" id="dk-codex" onclick="openApp('codex')">
+        <span class="dk-ico">★</span><span class="dk-txt">Codex</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-sep"></div>
+      <div class="dk-lbl">SYSTEM</div>
+      <div class="dk-btn" id="dk-logs" onclick="openApp('logs')">
+        <span class="dk-ico">≡</span><span class="dk-txt">Logs</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-btn" id="dk-settings" onclick="openApp('settings')">
+        <span class="dk-ico">⚙</span><span class="dk-txt">Config</span><div class="dk-pip"></div>
+      </div>
+      <div class="dk-spacer"></div>
+      <div class="dk-status">
+        <div class="dks-r"><span style="color:#00ff88">●</span>NET</div>
+        <div class="dks-r"><span style="color:#00d2ff">●</span>ENC</div>
+        <div class="dks-r"><span style="color:#00ff88">●</span>DB</div>
+        <div class="dks-r"><span style="color:#ffcc00">●</span>GPS</div>
+      </div>
+    </nav>
+
+    <main class="os-main">
+
+      <!-- ▒▒ DASHBOARD ▒▒ -->
+      <div id="app-dashboard" class="app active">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">⬡</span>OPERATIONS DASHBOARD — CCG BUNKER</div>
+          <div class="ab-chips">
+            <span class="chip chip-green">● LIVE</span>
+            <span class="chip chip-amber">▲ THREAT: MOD</span>
+            <span class="chip chip-blue">TRB SECURITY</span>
+          </div>
+        </div>
+
+        <div class="db-stats">
+          <div class="stat-card" style="--ac:#00d2ff">
+            <div class="sc-icon">👤</div><div class="sc-val" id="scOps">50+</div>
+            <div class="sc-lbl">OPERATIVES</div>
+            <canvas class="sc-spark" id="spk0" width="90" height="30"></canvas>
+          </div>
+          <div class="stat-card" style="--ac:#7b2ff7">
+            <div class="sc-icon">★</div><div class="sc-val" id="scCodes">0</div>
+            <div class="sc-lbl">CODES FOUND</div>
+            <canvas class="sc-spark" id="spk1" width="90" height="30"></canvas>
+          </div>
+          <div class="stat-card" style="--ac:#ff6b35">
+            <div class="sc-icon">▲</div><div class="sc-val warn-text">MOD</div>
+            <div class="sc-lbl">THREAT LEVEL</div>
+            <canvas class="sc-spark" id="spk2" width="90" height="30"></canvas>
+          </div>
+          <div class="stat-card" style="--ac:#00ff88">
+            <div class="sc-icon">⌘</div><div class="sc-val" id="scPkts">0</div>
+            <div class="sc-lbl">PACKETS TX</div>
+            <canvas class="sc-spark" id="spk3" width="90" height="30"></canvas>
+          </div>
+          <div class="stat-card" style="--ac:#ff2d9b">
+            <div class="sc-icon">◎</div><div class="sc-val green-text">ACTIVE</div>
+            <div class="sc-lbl">BUNKER STATUS</div>
+            <canvas class="sc-spark" id="spk4" width="90" height="30"></canvas>
+          </div>
+        </div>
+
+        <div class="db-body">
+          <div class="db-col" style="flex:1.6">
+            <div class="panel">
+              <div class="panel-title">▸ CCG BUNKER — VERTICAL CROSS-SECTION</div>
+              <div class="bunker-viz" id="bunkerViz">
+                <div class="bv-layer surface-layer"><span class="bvl-name">🌲 SURFACE — FOREST &amp; AIRBASE</span><span class="bvl-desc">HELI DROP · AIRBASE · FOREST PERIMETER · ROAD ACCESS POINTS</span></div>
+                <div class="bv-shaft">▼ UNDERGROUND DESCENT ▼</div>
+                <div class="bv-layer l1-layer active-layer"><span class="bvl-name">◉ SUBLEVEL 1 — ENTRY / TRB SECURITY</span><span class="bvl-desc">CHECKPOINT · DECONTAMINATION · ARMORY · TRB GUARD POST</span></div>
+                <div class="bv-shaft">▼</div>
+                <div class="bv-layer l2-layer"><span class="bvl-name">◉ SUBLEVEL 2 — OPERATIONS CENTER</span><span class="bvl-desc">COMMS HUB · BRIEFING ROOMS · ARCHIVE ENTRY · COIN EXCHANGE</span></div>
+                <div class="bv-shaft">▼</div>
+                <div class="bv-layer l3-layer you-layer"><span class="bvl-name">★ SUBLEVEL 3 — THIS TERMINAL [YOU ARE HERE]</span><span class="bvl-desc">DECODE CENTER · DATA CORE · RESEARCH LAB · CLASSIFIED VAULT</span></div>
+                <div class="bv-shaft">▼</div>
+                <div class="bv-layer l4-layer redact-layer"><span class="bvl-name">▓ SUBLEVEL 4 — ████████ ██████████</span><span class="bvl-desc">▓▓▓▓▓▓ CLEARANCE LEVEL OMEGA REQUIRED ▓▓▓▓▓▓</span></div>
+                <div class="bv-shaft dim-text">▼ &nbsp; signal degrading &nbsp; ▼</div>
+                <div class="bv-layer unk-layer"><span class="bvl-name">? &nbsp; UNKNOWN DEPTH — NO SIGNAL</span><span class="bvl-desc">SIGNAL LOST · DEPTH UNKNOWN · DO NOT DESCEND WITHOUT CLEARANCE</span></div>
+              </div>
+            </div>
+            <div class="panel" style="flex:1;overflow:hidden">
+              <div class="panel-title">▸ LIVE INTELLIGENCE FEED</div>
+              <div id="liveFeed" class="live-feed"></div>
+            </div>
+          </div>
+
+          <div class="db-col" style="flex:1">
+            <div class="panel">
+              <div class="panel-title">▸ ACTIVE ALERTS</div>
+              <div id="alertList" class="alert-list"></div>
+            </div>
+            <div class="panel" style="flex:1">
+              <div class="panel-title">▸ SURFACE OVERVIEW</div>
+              <canvas id="miniSector" class="mini-map-canvas"></canvas>
+            </div>
+            <div class="panel">
+              <div class="panel-title">▸ QUICK CODE CHECK</div>
+              <div class="qc-row">
+                <input type="text" id="qdInput" class="qc-input" placeholder="ENTER CODE..." autocomplete="off"/>
+                <button class="qc-btn" onclick="quickCheck()">VERIFY</button>
+              </div>
+              <div id="qdResult" class="qc-result"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="db-footer-banner">
+          ◈ &nbsp; FIND CODES HIDDEN IN THE MAP — ENTER THEM IN THE TERMINAL — UNLOCK LORE, REWARDS &amp; SECRETS &nbsp; ◈ &nbsp;
+          TRB SECURITY MONITORING ALL SESSIONS &nbsp; ◈ &nbsp; CCG BUNKER EVENT ACTIVE &nbsp; ◈
+        </div>
+      </div>
+
+      <!-- ▒▒ TERMINAL ▒▒ -->
+      <div id="app-terminal" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">▶_</span>DECODE TERMINAL — FIELD CODE PROCESSOR v5.1</div>
+          <div class="ab-chips">
+            <span class="chip chip-blue">AES-4096</span>
+            <span class="chip chip-green">● ACTIVE</span>
+          </div>
+        </div>
+        <div class="term-layout">
+          <div class="tsb">
+            <div class="tsb-lbl">COMMANDS</div>
+            <div class="tsb-cmd" onclick="injectCmd('HELP')">HELP</div>
+            <div class="tsb-cmd" onclick="injectCmd('STATUS')">STATUS</div>
+            <div class="tsb-cmd" onclick="injectCmd('CLEAR')">CLEAR</div>
+            <div class="tsb-cmd" onclick="injectCmd('HOME')">HOME</div>
+            <div class="tsb-cmd" onclick="injectCmd('SCAN')">SCAN</div>
+            <div class="tsb-cmd" onclick="injectCmd('LORE')">LORE</div>
+            <div class="tsb-sep"></div>
+            <div class="tsb-lbl">SESSION</div>
+            <div class="tsb-stat"><span>DECODED</span><b id="tsbDec">0</b></div>
+            <div class="tsb-stat"><span>ERRORS</span><b id="tsbErr">0</b></div>
+            <div class="tsb-stat"><span>TIME</span><b id="tsbTime">00:00</b></div>
+            <div class="tsb-sep"></div>
+            <div class="tsb-lbl">HINT</div>
+            <div class="tsb-hint">Codes are hidden in the forest, airbase, roads &amp; bunker depths.</div>
+          </div>
+          <div class="term-win">
+            <div class="tw-bar">
+              <div class="tw-dot" style="--c:#ff5f57"></div>
+              <div class="tw-dot" style="--c:#febc2e"></div>
+              <div class="tw-dot" style="--c:#28c840"></div>
+              <span class="tw-title">CCG-SECURE-SHELL — BUNKER-MAIN@OPERATIVE</span>
+              <span style="margin-left:auto;font-size:9px;color:rgba(255,255,255,0.2)">TRB SECURE</span>
+            </div>
+            <div id="termOutput" class="term-output">
+              <div class="tl dim">╔═══════════════════════════════════════════════════╗</div>
+              <div class="tl dim">║    CCG BUNKER DECODE TERMINAL  v5.1 — SECURE     ║</div>
+              <div class="tl dim">║    TRB SECURITY DIV — ALL ACTIVITY LOGGED        ║</div>
+              <div class="tl dim">╚═══════════════════════════════════════════════════╝</div>
+              <div class="tl">Type <span class="hl-cyan">HELP</span> for commands. Enter field codes to decrypt.</div>
+              <div class="tl dim">───────────────────────────────────────────────────</div>
+            </div>
+            <div class="tw-input-row">
+              <span class="tw-ps">OPERATIVE<span class="tw-at">@</span>CCG-BUNKER<span class="tw-arr"> ▸ </span></span>
+              <input type="text" id="termInput" class="tw-inp"
+                autocomplete="off" spellcheck="false" placeholder="ENTER COMMAND OR FIELD CODE..."/>
+              <button class="tw-exec" onclick="submitTerminal()">EXEC</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▒▒ MAP ▒▒ -->
+      <div id="app-map" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">◎</span>SECTOR MAP — CCG BUNKER AREA // CLASSIFIED</div>
+          <div class="ab-chips"><span class="chip chip-amber">EYES ONLY</span></div>
+        </div>
+        <div class="map-layout">
+          <div class="map-wrap">
+            <canvas id="sectorMap" class="sector-canvas"></canvas>
+            <div class="map-leg">
+              <div class="ml-r"><span style="color:#00ff88">●</span> Active Zone</div>
+              <div class="ml-r"><span style="color:#ff6b35">▲</span> Threat Area</div>
+              <div class="ml-r"><span style="color:#00d2ff">◎</span> CCG Bunker</div>
+              <div class="ml-r"><span style="color:#7b2ff7">★</span> Code Site</div>
+              <div class="ml-r"><span style="color:#ffcc00">✈</span> Airbase</div>
+              <div class="ml-r"><span style="color:#ff2d9b">🚁</span> Drop Zone</div>
+            </div>
+          </div>
+          <div class="map-panel">
+            <div class="mp-sec">SECTOR DATA</div>
+            <div class="mp-row"><span>GRID REF</span><span class="blue-text">FOREST-7</span></div>
+            <div class="mp-row"><span>BUNKER</span><span class="green-text">CCG-MAIN</span></div>
+            <div class="mp-row"><span>AIRBASE</span><span class="green-text">ACTIVE</span></div>
+            <div class="mp-row"><span>FOREST COVER</span><span>82%</span></div>
+            <div class="mp-row"><span>ROADS</span><span>3 ROUTES</span></div>
+            <div class="mp-row"><span>ANOMALIES</span><span class="warn-text">2 DETECTED</span></div>
+            <div class="mp-sep"></div>
+            <div class="mp-sec">CODE SITES</div>
+            <div class="mp-code"><span style="color:#7b2ff7">★</span> Heli Drop Zone</div>
+            <div class="mp-code"><span style="color:#7b2ff7">★</span> Airbase Hangar</div>
+            <div class="mp-code"><span style="color:#7b2ff7">★</span> North Forest Path</div>
+            <div class="mp-code"><span style="color:#7b2ff7">★</span> Bunker Entrance</div>
+            <div class="mp-code"><span style="color:#7b2ff7">★</span> Sublevel 2 Archive</div>
+            <div class="mp-code"><span style="color:#7b2ff7">★</span> Data Core (Deep)</div>
+            <div class="mp-sep"></div>
+            <div class="mp-sec">SCAN</div>
+            <div class="mp-row"><span>LAST SCAN</span><span id="mapScan" class="mono-sm blue-text">--:--:--</span></div>
+            <div class="mp-row"><span>STATUS</span><span class="green-text">SWEEPING</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▒▒ INTEL ▒▒ -->
+      <div id="app-intel" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">◈</span>INTELLIGENCE FILE — EVENT BRIEFING // EYES ONLY</div>
+          <div class="ab-chips"><span class="chip chip-amber">CLASSIFIED</span></div>
+        </div>
+        <div class="intel-layout">
+          <div class="intel-body">
+            <div class="ib"><div class="ib-tag">MISSION OVERVIEW</div><div class="ib-text">You were dropped from a helicopter into a forest sector. After navigating through dense treeline and past the airbase, you reached the CCG Bunker — a classified underground facility controlled by CCG Productions and secured by the TRB Security Division. You are currently on Sublevel 3, seated at the primary Decode Terminal.</div></div>
+            <div class="ib"><div class="ib-tag">YOUR OBJECTIVE</div><div class="ib-text">Codes have been concealed throughout the operational area — scattered across the forest, the roads connecting the bunker to the outside world, the airbase, the bunker entrance, and deep within its underground levels. Find them. Enter them here. Each code unlocks a piece of the classified archive, a reward, or a hidden secret no one else will see.</div></div>
+            <div class="ib"><div class="ib-tag">THE CCG BUNKER</div><div class="ib-text">A single classified structure that expands underground through multiple sublevels. Road access points cut through the surrounding forest, connecting the bunker to the outside world. TRB Security Division controls all entry points with extreme prejudice. Below Sublevel 3, access requires Omega clearance. Below Sublevel 4, no reliable signals have been recorded. What exists at the bottom remains unknown — or at least, officially unacknowledged.</div></div>
+            <div class="ib"><div class="ib-tag">TRB SECURITY DIVISION</div><div class="ib-text">The TRB Security Division is the armed intelligence and enforcement wing responsible for CCG Bunker protection. They monitor all terminal sessions, all code entries, all operative movements throughout the facility. Within the bunker, their authority is absolute. They are allies — as long as your clearance is valid.</div></div>
+            <div class="ib"><div class="ib-tag">OPERATIVE DIRECTIVES</div><div class="ib-text">01. Search every corner — surface, forest, roads, airbase, all bunker levels.<br/>02. Enter all discovered codes into this terminal immediately.<br/>03. Do not share codes with uncleared individuals.<br/>04. Earn coins through event games and spend them in the exchange.<br/>05. Collect achievements — some are visible, some are secret.<br/>06. There is something at the bottom. Find it before it finds you.</div></div>
+            <div class="ir-block">
+              <div class="ir-stamp">⚠ BEYOND THIS POINT — OMEGA CLEARANCE REQUIRED ⚠</div>
+              <div class="ir-text">████████ ██ ███ THE REAL PURPOSE OF CCG BUNKER ███ ██████ ██ ██████<br/>███ ████████████ ██ ███ EXPERIMENT ZERO ████ ██ ████ ██████ █████<br/>████ ██████ ██ SUBLEVEL 5 EXISTS AND IS INHABITED ██ ████ ██ ████<br/>██████ ████ ██ SOMETHING RESPONDED TO THE LAST SIGNAL ████████ ████</div>
+            </div>
+          </div>
+          <div class="intel-side">
+            <div class="is-card" style="--ac:#00d2ff"><div class="isc-lbl">CLEARANCE</div><div class="isc-val blue-text">ALPHA</div></div>
+            <div class="is-card" style="--ac:#7b2ff7"><div class="isc-lbl">CODES FOUND</div><div class="isc-val" id="intelFound">0</div></div>
+            <div class="is-card" style="--ac:#ff6b35"><div class="isc-lbl">UNKNOWN SIGS</div><div class="isc-val warn-text">3</div></div>
+            <div class="is-card" style="--ac:#ff2d9b"><div class="isc-lbl">DEPTH</div><div class="isc-val">SUBLEVEL 3</div></div>
+            <div class="is-tl"><div class="ist-hdr">ACTIVITY</div><div id="intelTL" class="ist-body"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▒▒ COMMS ▒▒ -->
+      <div id="app-comms" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">⌘</span>INTERCEPTED COMMS — SIGNAL ARCHIVE</div>
+          <div class="ab-chips"><span class="chip chip-blue">ENCRYPTED</span><span class="chip chip-amber">HANDLE WITH CARE</span></div>
+        </div>
+        <div class="comms-layout">
+          <div class="comms-list">
+            <div class="ci active-ci" onclick="selectComm(0)"><div class="ci-meta"><span class="ci-from">CCG-HQ</span><span class="ci-t">07:04:11</span></div><div class="ci-subj">OPERATIVE DEPLOYMENT ORDER</div></div>
+            <div class="ci" onclick="selectComm(1)"><div class="ci-meta"><span class="ci-from blue-text">TRB-COMMAND</span><span class="ci-t">06:22:47</span></div><div class="ci-subj">SECURITY BRIEFING — PRE-MISSION</div></div>
+            <div class="ci" onclick="selectComm(2)"><div class="ci-meta"><span class="ci-from warn-text">UNKNOWN_SOURCE</span><span class="ci-t warn-text">??:??:??</span></div><div class="ci-subj warn-text">⚠ URGENT — READ IMMEDIATELY</div></div>
+            <div class="ci" onclick="selectComm(3)"><div class="ci-meta"><span class="ci-from orange-text">CCG-ARCHIVE</span><span class="ci-t">LOGGED</span></div><div class="ci-subj">SUBLEVEL 4 — INCIDENT REPORT 07</div></div>
+            <div class="ci" onclick="selectComm(4)"><div class="ci-meta"><span class="ci-from" style="color:#ff2d9b">??? ENCRYPTED ???</span><span class="ci-t" style="color:#ff2d9b">RED-ZONE</span></div><div class="ci-subj" style="color:#ff2d9b">find the door</div></div>
+          </div>
+          <div id="commViewer" class="comms-viewer"></div>
+        </div>
+      </div>
+
+      <!-- ▒▒ CODEX ▒▒ -->
+      <div id="app-codex" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">★</span>OPERATIVE CODEX — ACHIEVEMENTS &amp; DISCOVERIES</div>
+          <div class="ab-chips"><span class="chip chip-purple">YOUR PROFILE</span></div>
+        </div>
+        <div class="codex-layout">
+          <div class="codex-profile">
+            <div class="cp-avatar">◈</div>
+            <div class="cp-name">OPERATIVE_ALPHA</div>
+            <div class="cp-badge">ALPHA CLEARANCE</div>
+            <div class="cp-stats">
+              <div class="cps"><div class="cps-v" id="cpDec">0</div><div class="cps-l">DECODED</div></div>
+              <div class="cps"><div class="cps-v" id="cpAch">0</div><div class="cps-l">ACHIEVEMENTS</div></div>
+            </div>
+          </div>
+          <div class="codex-ach">
+            <div class="ca-title">ACHIEVEMENTS</div>
+            <div id="achGrid" class="ach-grid"></div>
+          </div>
+          <div class="codex-disc">
+            <div class="ca-title">DECODED INTEL</div>
+            <div id="discList" class="disc-list"><div class="dl-empty">No codes decoded yet. Find them in the field, operative.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ▒▒ LOGS ▒▒ -->
+      <div id="app-logs" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">≡</span>SYSTEM ACTIVITY LOG — REAL-TIME</div>
+          <div class="ab-chips"><span class="chip chip-green blink-text">● RECORDING</span></div>
+        </div>
+        <div class="logs-bar">
+          <button class="lb-btn active-lb" onclick="filterLogs('all',this)">ALL</button>
+          <button class="lb-btn" onclick="filterLogs('auth',this)">AUTH</button>
+          <button class="lb-btn" onclick="filterLogs('decode',this)">DECODE</button>
+          <button class="lb-btn" onclick="filterLogs('system',this)">SYSTEM</button>
+          <button class="lb-btn" onclick="filterLogs('network',this)">NETWORK</button>
+          <button class="lb-clear" onclick="clearLogs()">⌫ CLEAR</button>
+        </div>
+        <div id="logsOut" class="logs-out"></div>
+      </div>
+
+      <!-- ▒▒ SETTINGS ▒▒ -->
+      <div id="app-settings" class="app">
+        <div class="app-bar">
+          <div class="ab-title"><span class="ab-ico">⚙</span>SYSTEM CONFIGURATION — OPERATOR PANEL</div>
+          <div class="ab-chips"><span class="chip chip-blue">v5.1.0</span></div>
+        </div>
+        <div class="settings-body">
+          <div class="sg">
+            <div class="sg-title">VISUAL EFFECTS</div>
+            <div class="sg-row"><div class="sgr-i"><b>SCANLINES</b><small>CRT horizontal overlay</small></div><div class="tpill on" id="tog-scanlines" onclick="toggleFX('scanlines')"><div class="tp-k"></div><span>ON</span></div></div>
+            <div class="sg-row"><div class="sgr-i"><b>FLICKER</b><small>Phosphor flicker</small></div><div class="tpill on" id="tog-flicker" onclick="toggleFX('flicker')"><div class="tp-k"></div><span>ON</span></div></div>
+            <div class="sg-row"><div class="sgr-i"><b>FILM GRAIN</b><small>Noise texture</small></div><div class="tpill on" id="tog-grain" onclick="toggleFX('grain')"><div class="tp-k"></div><span>ON</span></div></div>
+            <div class="sg-row"><div class="sgr-i"><b>CHROMATIC</b><small>Color aberration</small></div><div class="tpill on" id="tog-chromatic" onclick="toggleFX('chromatic')"><div class="tp-k"></div><span>ON</span></div></div>
+            <div class="sg-row"><div class="sgr-i"><b>CURSOR GLOW</b><small>Mouse trail effect</small></div><div class="tpill on" id="tog-cursor" onclick="toggleFX('cursor')"><div class="tp-k"></div><span>ON</span></div></div>
+          </div>
+          <div class="sg">
+            <div class="sg-title">AUDIO</div>
+            <div class="sg-row"><div class="sgr-i"><b>SOUND FX</b><small>All system audio</small></div><div class="tpill on" id="tog-sound" onclick="toggleFX('sound')"><div class="tp-k"></div><span>ON</span></div></div>
+            <div class="sg-row"><div class="sgr-i"><b>KEYSTROKE SFX</b><small>Click sounds</small></div><div class="tpill on" id="tog-typing" onclick="toggleFX('typing')"><div class="tp-k"></div><span>ON</span></div></div>
+          </div>
+          <div class="sg">
+            <div class="sg-title">ACTIONS</div>
+            <div class="sg-actions">
+              <button class="sga" onclick="clearLogs()">⌫ CLEAR LOGS</button>
+              <button class="sga danger-sga" onclick="lockSystem()">⏻ LOCK SYSTEM</button>
+            </div>
+            <div class="sg-info">
+              <p>CCG BUNKER OS v5.1.0 — TRB INTERNAL BUILD</p>
+              <p>NODE: CCG-BNK-MAIN // SN: CCG-BNK-0077</p>
+              <p>© CCG PRODUCTIONS — DO NOT DISTRIBUTE</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <footer class="os-footer">
+    <span>CCG BUNKER NODE <span class="green-text">●</span> TRB SECURE UPLINK</span>
+    <span id="osSession">SESSION: 00:00</span>
+    <span>TX: <span id="osTX">0</span> &nbsp;│&nbsp; RX: <span id="osRX">0</span> &nbsp;│&nbsp; AES-4096</span>
+  </footer>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
