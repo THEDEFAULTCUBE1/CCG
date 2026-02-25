@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CCG Bunker — Field Terminal</title>
+<link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     1. PRIVACY NOTICE
+══════════════════════════════════════ -->
+<div id="scPrivacy">
+  <canvas id="privBg"></canvas>
+  <div class="prv-box">
+    <div class="prv-icon">&#128274;</div>
+    <div class="prv-title">Before You Continue</div>
+    <div class="prv-body">
+      This site is a <strong>visual project only</strong> and does not save or track anything about you.
+      It has no database, no server, and no connection to Roblox or Discord.
+      Everything runs entirely inside your browser &mdash; nothing leaves your device.
+      <br><br>
+      If you prefer extra privacy, open this page in <strong>incognito / private browsing mode</strong>,
+      or view screenshots of the terminal instead.
+      <br><br>
+      This terminal is part of the <strong>CCG Bunker event</strong> by CCG Productions.
+    </div>
+    <button class="prv-btn" onclick="OS.acceptPrivacy()">I Understand &mdash; Continue</button>
+    <div class="prv-note">No cookies &nbsp;&middot;&nbsp; No tracking &nbsp;&middot;&nbsp; No accounts</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     2. BOOT SCREEN (cinematic)
+══════════════════════════════════════ -->
+<div id="scBoot" style="display:none">
+  <canvas id="bootBg"></canvas>
+  <div class="boot-center">
+    <div class="boot-logo-wrap">
+      <div class="boot-logo" id="bootLogo">CCG</div>
+      <div class="boot-logo-ring r1"></div>
+      <div class="boot-logo-ring r2"></div>
+    </div>
+    <div class="boot-title-line">BUNKER&nbsp;&nbsp;FIELD&nbsp;&nbsp;TERMINAL</div>
+    <div class="boot-bar-outer">
+      <div class="boot-bar-blocks" id="bootBlocks"></div>
+    </div>
+    <div class="boot-status-row">
+      <div class="boot-status-dot" id="bootDot"></div>
+      <div id="bootMsg" class="boot-msg-txt">INITIALIZING...</div>
+    </div>
+    <div class="boot-footer-row">
+      <span class="boot-ver">v5.1 &nbsp;&mdash;&nbsp; BUILD INTERNAL</span>
+      <span class="boot-trb">TRB SECURITY DIVISION</span>
+    </div>
+  </div>
+  <div class="boot-corner tl">&#9484;&#9472;&#9472;</div>
+  <div class="boot-corner tr">&#9472;&#9472;&#9488;</div>
+  <div class="boot-corner bl">&#9492;&#9472;&#9472;</div>
+  <div class="boot-corner br">&#9472;&#9472;&#9496;</div>
+</div>
+
+<!-- ══════════════════════════════════════
+     3. PROFILE SELECT (XP Welcome)
+══════════════════════════════════════ -->
+<div id="scProfile" style="display:none">
+  <canvas id="profBg"></canvas>
+  <div class="prof-screen">
+    <div class="prof-header">
+      <div class="prof-hdr-title">CCG Bunker Terminal</div>
+      <div class="prof-hdr-line"></div>
+      <div class="prof-hdr-sub">To begin, click your operative profile</div>
+    </div>
+    <div class="prof-list">
+      <div class="prof-card" onclick="OS.pickProfile('operative',this)">
+        <div class="prof-card-av">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <circle cx="28" cy="20" r="12" fill="rgba(255,255,255,0.85)"/>
+            <ellipse cx="28" cy="44" rx="18" ry="12" fill="rgba(255,255,255,0.85)"/>
+          </svg>
+        </div>
+        <div class="prof-card-name">Field Operative</div>
+        <div class="prof-card-role">Alpha Clearance</div>
+        <div class="prof-card-arrow">&#x276F;</div>
+      </div>
+      <div class="prof-card locked" onclick="OS.pickProfile('trb',this)">
+        <div class="prof-card-av locked-av">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <circle cx="28" cy="20" r="12" fill="rgba(255,255,255,0.4)"/>
+            <ellipse cx="28" cy="44" rx="18" ry="12" fill="rgba(255,255,255,0.4)"/>
+            <rect x="22" y="28" width="12" height="10" rx="2" fill="rgba(255,200,0,0.8)"/>
+            <rect x="24" y="24" width="8" height="6" rx="4" fill="none" stroke="rgba(255,200,0,0.8)" stroke-width="2"/>
+          </svg>
+        </div>
+        <div class="prof-card-name" style="color:rgba(255,255,255,0.5)">TRB Personnel</div>
+        <div class="prof-card-role" style="color:rgba(255,255,255,0.35)">Requires authorization</div>
+        <div class="prof-card-arrow" style="color:rgba(255,200,0,0.7)">
+          <svg width="16" height="18" viewBox="0 0 16 18"><rect x="3" y="8" width="10" height="9" rx="1.5" fill="currentColor"/><path d="M5 8V5.5a3 3 0 016 0V8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+      </div>
+      <div class="prof-card locked" onclick="OS.pickProfile('omega',this)">
+        <div class="prof-card-av locked-av">
+          <svg width="56" height="56" viewBox="0 0 56 56">
+            <text x="28" y="38" font-size="32" text-anchor="middle" fill="rgba(255,255,255,0.25)" font-family="Tahoma,Arial,sans-serif">?</text>
+          </svg>
+        </div>
+        <div class="prof-card-name" style="color:rgba(255,255,255,0.35)">[&nbsp;REDACTED&nbsp;]</div>
+        <div class="prof-card-role" style="color:rgba(255,255,255,0.2)">Omega Clearance</div>
+        <div class="prof-card-arrow" style="color:rgba(200,0,0,0.6)">
+          <svg width="16" height="18" viewBox="0 0 16 18"><rect x="3" y="8" width="10" height="9" rx="1.5" fill="currentColor"/><path d="M5 8V5.5a3 3 0 016 0V8" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+        </div>
+      </div>
+    </div>
+    <div class="prof-footer">
+      <div class="prof-footer-note">After logging in, press ESC or use the Start menu to lock the terminal.</div>
+      <button class="prof-shutdown-btn" onclick="OS.shutdownScreen()">
+        <svg width="14" height="14" viewBox="0 0 14 14" style="vertical-align:middle;margin-right:4px">
+          <circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="1.5"/>
+          <line x1="7" y1="2" x2="7" y2="7" stroke="currentColor" stroke-width="1.5"/>
+        </svg>
+        Shut Down
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     4. LOGIN SCREEN
+══════════════════════════════════════ -->
+<div id="scLogin" style="display:none">
+  <canvas id="loginBg"></canvas>
+  <div class="login-top-banner">
+    <div class="ltb-title">CCG Bunker Terminal</div>
+    <div class="ltb-sub">TRB Security Division &nbsp;&middot;&nbsp; Restricted Access</div>
+  </div>
+  <div class="login-center">
+    <div class="login-card">
+      <button class="lc-back" onclick="OS.backToProfiles()">&#10094; Back</button>
+      <div class="lc-avatar">
+        <svg width="64" height="64" viewBox="0 0 64 64">
+          <circle cx="32" cy="22" r="14" fill="rgba(255,255,255,0.88)"/>
+          <ellipse cx="32" cy="50" rx="21" ry="14" fill="rgba(255,255,255,0.88)"/>
+        </svg>
+      </div>
+      <div class="lc-name" id="loginName">Field Operative</div>
+      <div class="lc-role" id="loginRole">Alpha Clearance</div>
+      <div class="lc-divider"></div>
+      <div class="lc-label">Access Code</div>
+      <input id="loginInput" class="lc-input" type="password"
+        autocomplete="off" spellcheck="false" placeholder="Enter access code..."/>
+      <button class="lc-btn" onclick="OS.doLogin()">Log On &#10095;</button>
+      <div id="loginMsg" class="lc-msg"></div>
+    </div>
+  </div>
+  <div class="login-bottom-banner">
+    TRB Security Division &nbsp;&middot;&nbsp; CCG Bunker &nbsp;&middot;&nbsp; All activity is monitored and logged
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     5. DESKTOP
+══════════════════════════════════════ -->
+<div id="scDesktop" style="display:none">
+  <div id="wallpaper"></div>
+  <div id="scanlines"></div>
+  <canvas id="deskFx"></canvas>
+
+  <!-- Desktop icons -->
+  <div id="deskIcons">
+    <div class="dicon" ondblclick="WM.open('terminal')">
+      <div class="dicon-img">&#128187;</div>
+      <div class="dicon-lbl">Decode Terminal</div>
+    </div>
+    <div class="dicon" ondblclick="WM.open('map')">
+      <div class="dicon-img">&#127757;</div>
+      <div class="dicon-lbl">Sector Map</div>
+    </div>
+    <div class="dicon" ondblclick="WM.open('intel')">
+      <div class="dicon-img">&#128193;</div>
+      <div class="dicon-lbl">Intel Files</div>
+    </div>
+    <div class="dicon" ondblclick="WM.open('comms')">
+      <div class="dicon-img">&#128225;</div>
+      <div class="dicon-lbl">Comms</div>
+    </div>
+    <div class="dicon" ondblclick="WM.open('codex')">
+      <div class="dicon-img">&#127942;</div>
+      <div class="dicon-lbl">Codex</div>
+    </div>
+    <div class="dicon" ondblclick="WM.open('notepad')">
+      <div class="dicon-img">&#128221;</div>
+      <div class="dicon-lbl">Notepad</div>
+    </div>
+    <div class="dicon" ondblclick="WM.open('settings')">
+      <div class="dicon-img">&#9881;&#65039;</div>
+      <div class="dicon-lbl">Control Panel</div>
+    </div>
+  </div>
+
+  <!-- TERMINAL -->
+  <div class="xwin" id="win-terminal" style="width:660px;height:430px;top:55px;left:180px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-terminal')">
+      <span class="xwin-title">&#128187; Decode Terminal &mdash; CCG Bunker</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('terminal')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('terminal')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('terminal')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-menubar">
+      <span class="xmb" onclick="Term.inject('HELP')">Commands</span>
+      <span class="xmb" onclick="Term.inject('CLEAR')">Clear</span>
+      <span class="xmb" onclick="Term.inject('STATUS')">Status</span>
+      <span class="xmb" onclick="WM.open('codex')">Codex</span>
+    </div>
+    <div class="xwin-body">
+      <div class="term-wrap">
+        <div id="termOut" class="term-out">
+          <span class="tl td">CCG Bunker Decode Terminal [Version 5.1]</span>
+          <span class="tl td">(c) CCG Productions &mdash; TRB Security Division.</span>
+          <span class="tl td">&nbsp;</span>
+          <span class="tl tw">Type <span class="tg">HELP</span> for available commands.</span>
+          <span class="tl tw">Enter field codes found during the event to decrypt intel.</span>
+          <span class="tl td">&nbsp;</span>
+        </div>
+        <div class="term-input-row">
+          <span class="term-prompt">C:\CCG\BUNKER&gt;&nbsp;</span>
+          <input id="termIn" class="term-field" type="text"
+            autocomplete="off" spellcheck="false" placeholder="type command or code..."/>
+        </div>
+      </div>
+    </div>
+    <div class="xwin-statusbar">
+      <div class="xsb-seg" id="termSb1">Ready</div>
+      <div class="xsb-seg" id="termSb2">Decoded: 0</div>
+      <div class="xsb-seg">AES-4096 ACTIVE</div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-terminal')"></div>
+  </div>
+
+  <!-- MAP -->
+  <div class="xwin" id="win-map" style="width:700px;height:490px;top:38px;left:160px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-map')">
+      <span class="xwin-title">&#127757; Sector Map &mdash; Global Location</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('map')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('map')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('map')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-menubar">
+      <span class="xmb">View</span>
+      <span class="xmb" id="mapRotBtn" onclick="Globe.toggleRotate()">Pause Rotation</span>
+    </div>
+    <div class="xwin-body" style="position:relative">
+      <div class="map-inner">
+        <canvas id="globeCanvas"></canvas>
+        <div class="map-hud">
+          <div class="mhud-title">&#9670; CCG BUNKER</div>
+          <div class="mhud-row"><span>Location</span><span class="mhud-val">CLASSIFIED</span></div>
+          <div class="mhud-row"><span>Sector 00</span><span class="mhud-val"><span class="dot green"></span>Active</span></div>
+          <div class="mhud-row"><span>Sector 01</span><span class="mhud-val"><span class="dot green"></span>Active</span></div>
+          <div class="mhud-row"><span>Sector 02</span><span class="mhud-val"><span class="dot yellow"></span>Guarded</span></div>
+          <div class="mhud-row"><span>Your Level</span><span class="mhud-val">Sublevel 3</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="xwin-statusbar">
+      <div class="xsb-seg">Rotating globe &middot; CCG island marked in red &middot; Mid-Atlantic</div>
+      <div class="xsb-seg" id="mapClock"></div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-map')"></div>
+  </div>
+
+  <!-- INTEL -->
+  <div class="xwin" id="win-intel" style="width:640px;height:470px;top:65px;left:175px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-intel')">
+      <span class="xwin-title">&#128193; Intel Files &mdash; C:\CCG\INTEL\</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('intel')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('intel')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('intel')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-menubar">
+      <span class="xmb">File</span><span class="xmb">Edit</span>
+      <span class="xmb">View</span><span class="xmb">Help</span>
+    </div>
+    <div class="xwin-addrbar">
+      <span class="addr-lbl">Address</span>
+      <div class="addr-box" id="intelAddr">C:\CCG\INTEL\overview.txt</div>
+    </div>
+    <div class="xwin-body">
+      <div class="intel-split">
+        <div class="intel-tree">
+          <div class="it-hdr">&#128194; Intel Files</div>
+          <div class="it-item active" onclick="Intel.show('mission',this)">&#128196; overview.txt</div>
+          <div class="it-item" onclick="Intel.show('sectors',this)">&#128196; sectors.txt</div>
+          <div class="it-item" onclick="Intel.show('trb',this)">&#128196; trb_brief.txt</div>
+          <div class="it-item" onclick="Intel.show('subject0',this)">&#128196; subject0.txt</div>
+          <div class="it-item" onclick="Intel.show('event',this)">&#128196; event_rules.txt</div>
+          <div class="it-hdr" style="color:#a00">&#128274; Classified</div>
+          <div class="it-item red-item" onclick="Intel.show('classified',this)">&#128272; [RESTRICTED]</div>
+        </div>
+        <div class="intel-view" id="intelView"></div>
+      </div>
+    </div>
+    <div class="xwin-statusbar">
+      <div class="xsb-seg" id="intelSb">overview.txt</div>
+      <div class="xsb-seg">6 objects</div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-intel')"></div>
+  </div>
+
+  <!-- COMMS -->
+  <div class="xwin" id="win-comms" style="width:650px;height:440px;top:72px;left:185px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-comms')">
+      <span class="xwin-title">&#128225; Comms &mdash; Intercepted Signal Archive</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('comms')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('comms')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('comms')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-menubar">
+      <span class="xmb">Inbox</span><span class="xmb">View</span>
+    </div>
+    <div class="xwin-body">
+      <div class="comms-split">
+        <div class="comms-list">
+          <div class="cl-hdr">Inbox (5 messages)</div>
+          <div class="cl-item sel" onclick="Comms.select(0,this)">
+            <div class="cl-from">CCG-HQ</div>
+            <div class="cl-subj">Deployment Order</div>
+            <div class="cl-time">07:04:11</div>
+          </div>
+          <div class="cl-item" onclick="Comms.select(1,this)">
+            <div class="cl-from" style="color:#1e5cbf">TRB-COMMAND</div>
+            <div class="cl-subj">Security Briefing</div>
+            <div class="cl-time">06:22:47</div>
+          </div>
+          <div class="cl-item" onclick="Comms.select(2,this)">
+            <div class="cl-from" style="color:#b05a00">UNKNOWN SOURCE</div>
+            <div class="cl-subj">&#9888; Urgent &mdash; read this</div>
+            <div class="cl-time">??:??:??</div>
+          </div>
+          <div class="cl-item" onclick="Comms.select(3,this)">
+            <div class="cl-from" style="color:#8a0000">CCG-ARCHIVE</div>
+            <div class="cl-subj">Blackout &mdash; Report #03</div>
+            <div class="cl-time">LOGGED</div>
+          </div>
+          <div class="cl-item" onclick="Comms.select(4,this)">
+            <div class="cl-from" style="color:#7a1090">??? ENCRYPTED</div>
+            <div class="cl-subj">find me</div>
+            <div class="cl-time">RED-ZONE</div>
+          </div>
+        </div>
+        <div class="comms-view" id="commsView"></div>
+      </div>
+    </div>
+    <div class="xwin-statusbar">
+      <div class="xsb-seg">5 messages &mdash; TRB monitored channel</div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-comms')"></div>
+  </div>
+
+  <!-- CODEX -->
+  <div class="xwin" id="win-codex" style="width:590px;height:460px;top:62px;left:195px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-codex')">
+      <span class="xwin-title">&#127942; Codex &mdash; Achievements &amp; Discoveries</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('codex')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('codex')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('codex')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-body">
+      <div class="codex-split">
+        <div class="codex-sidebar">
+          <div class="codex-avatar-svg">
+            <svg width="64" height="64" viewBox="0 0 64 64">
+              <circle cx="32" cy="22" r="14" fill="rgba(100,160,240,0.9)"/>
+              <ellipse cx="32" cy="52" rx="22" ry="14" fill="rgba(100,160,240,0.9)"/>
+            </svg>
+          </div>
+          <div class="codex-uname">OPERATIVE</div>
+          <div class="codex-badge">ALPHA CLEARANCE</div>
+          <div class="codex-stats">
+            <div class="cxs"><div class="cxs-n" id="cxDec">0</div><div class="cxs-l">DECODED</div></div>
+            <div class="cxs"><div class="cxs-n" id="cxAch">0</div><div class="cxs-l">ACHIEV.</div></div>
+          </div>
+        </div>
+        <div class="codex-main">
+          <div class="cx-heading">ACHIEVEMENTS</div>
+          <div id="achGrid" class="ach-grid"></div>
+          <div class="cx-heading" style="margin-top:14px">DECODED INTEL</div>
+          <div id="discList" class="disc-list">
+            <div class="disc-empty">No codes decoded yet. Find them in the field.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-codex')"></div>
+  </div>
+
+  <!-- NOTEPAD -->
+  <div class="xwin" id="win-notepad" style="width:500px;height:360px;top:90px;left:210px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-notepad')">
+      <span class="xwin-title">&#128221; Notepad &mdash; Untitled</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('notepad')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('notepad')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('notepad')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-menubar">
+      <span class="xmb">File</span><span class="xmb">Edit</span><span class="xmb">Format</span>
+    </div>
+    <div class="xwin-body">
+      <textarea id="notepadArea" class="np-area"
+        placeholder="Use this to take notes during the event..."></textarea>
+    </div>
+    <div class="xwin-statusbar">
+      <div class="xsb-seg" id="npSb">Ln 1, Col 1</div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-notepad')"></div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="xwin" id="win-settings" style="width:440px;height:390px;top:95px;left:220px">
+    <div class="xwin-titlebar" onmousedown="WM.drag(event,'win-settings')">
+      <span class="xwin-title">&#9881;&#65039; Control Panel</span>
+      <div class="xwin-btns">
+        <button class="xwb min" onclick="WM.minimize('settings')">&#8212;</button>
+        <button class="xwb max" onclick="WM.maximize('settings')">&#9633;</button>
+        <button class="xwb cls" onclick="WM.close('settings')">&#10005;</button>
+      </div>
+    </div>
+    <div class="xwin-body">
+      <div class="cp-wrap">
+        <div class="cp-sidebar">
+          <div class="cp-sb-ttl">Control Panel</div>
+          <div class="cp-sb-item">Display</div>
+          <div class="cp-sb-item">Sounds</div>
+          <div class="cp-sb-item">Security</div>
+        </div>
+        <div class="cp-content">
+          <div class="cp-section">
+            <div class="cp-sec-ttl">Display</div>
+            <div class="cp-row">
+              <div><div class="cp-lbl">CRT Scanlines</div><div class="cp-desc">Retro screen overlay</div></div>
+              <div class="xp-cb" id="cb-scanlines" onclick="Settings.toggle('scanlines')"></div>
+            </div>
+          </div>
+          <div class="cp-section">
+            <div class="cp-sec-ttl">Sounds</div>
+            <div class="cp-row">
+              <div><div class="cp-lbl">Sound Effects</div><div class="cp-desc">UI and terminal sounds</div></div>
+              <div class="xp-cb on" id="cb-sound" onclick="Settings.toggle('sound')"></div>
+            </div>
+            <div class="cp-row">
+              <div><div class="cp-lbl">Typing Clicks</div><div class="cp-desc">Terminal keystroke sounds</div></div>
+              <div class="xp-cb on" id="cb-typing" onclick="Settings.toggle('typing')"></div>
+            </div>
+          </div>
+          <div class="cp-section">
+            <div class="cp-sec-ttl">Security</div>
+            <div class="cp-row">
+              <div><div class="cp-lbl">Lock System</div></div>
+              <button class="cp-btn danger" onclick="OS.lock()">Lock Now</button>
+            </div>
+          </div>
+          <div class="cp-sysinfo">
+            CCG Bunker Terminal v5.1<br>
+            TRB Security Division &middot; Node: CCG-BNK-MAIN<br>
+            Build: INTERNAL &mdash; DO NOT DISTRIBUTE
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="xwin-resize" onmousedown="WM.resize(event,'win-settings')"></div>
+  </div>
+
+  <!-- TASKBAR -->
+  <div id="taskbar">
+    <button id="startBtn" onclick="Start.toggle()">
+      <span class="start-flag">&#9873;</span>
+      <span class="start-lbl">start</span>
+    </button>
+    <div id="tbApps"></div>
+    <div id="tray">
+      <span class="tray-ico">&#128246;</span>
+      <span class="tray-ico">&#128266;</span>
+      <div id="trayClock">00:00</div>
+    </div>
+  </div>
+
+  <!-- START MENU -->
+  <div id="startMenu">
+    <div class="sm-head">
+      <div class="sm-avatar-svg">
+        <svg width="44" height="44" viewBox="0 0 44 44">
+          <circle cx="22" cy="15" r="10" fill="rgba(255,255,255,0.9)"/>
+          <ellipse cx="22" cy="36" rx="16" ry="10" fill="rgba(255,255,255,0.9)"/>
+        </svg>
+      </div>
+      <div class="sm-head-text">
+        <div class="sm-uname">Field Operative</div>
+        <div class="sm-urole">Alpha Clearance</div>
+      </div>
+    </div>
+    <div class="sm-cols">
+      <div class="sm-left">
+        <div class="sm-item pinned" onclick="WM.open('terminal');Start.close()">
+          <span class="smi-ico">&#128187;</span>
+          <div><div class="smi-lbl">Decode Terminal</div><div class="smi-sub">Decrypt field codes</div></div>
+        </div>
+        <div class="sm-divider"></div>
+        <div class="sm-item" onclick="WM.open('map');Start.close()">
+          <span class="smi-ico">&#127757;</span><div><div class="smi-lbl">Sector Map</div></div>
+        </div>
+        <div class="sm-item" onclick="WM.open('intel');Start.close()">
+          <span class="smi-ico">&#128193;</span><div><div class="smi-lbl">Intel Files</div></div>
+        </div>
+        <div class="sm-item" onclick="WM.open('comms');Start.close()">
+          <span class="smi-ico">&#128225;</span><div><div class="smi-lbl">Comms</div></div>
+        </div>
+        <div class="sm-item" onclick="WM.open('codex');Start.close()">
+          <span class="smi-ico">&#127942;</span><div><div class="smi-lbl">Codex</div></div>
+        </div>
+        <div class="sm-item" onclick="WM.open('notepad');Start.close()">
+          <span class="smi-ico">&#128221;</span><div><div class="smi-lbl">Notepad</div></div>
+        </div>
+      </div>
+      <div class="sm-right">
+        <div class="sm-right-ttl">Places</div>
+        <div class="sm-item" onclick="WM.open('intel');Start.close()">
+          <span class="smi-ico">&#128194;</span><div><div class="smi-lbl">Documents</div></div>
+        </div>
+        <div class="sm-item" onclick="WM.open('settings');Start.close()">
+          <span class="smi-ico">&#9881;&#65039;</span><div><div class="smi-lbl">Control Panel</div></div>
+        </div>
+        <div class="sm-divider"></div>
+        <div class="sm-item" onclick="WM.open('codex');Start.close()">
+          <span class="smi-ico">&#127942;</span><div><div class="smi-lbl">Achievements</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="sm-foot">
+      <button class="sm-ftn" onclick="OS.lock()">
+        <svg width="13" height="13" viewBox="0 0 14 14" style="vertical-align:middle;margin-right:5px"><path d="M7 1v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.2 2.8A5.5 5.5 0 107 13a5.5 5.5 0 003.6-9.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Log Off</button>
+      <button class="sm-ftn" onclick="OS.shutdownFromMenu()">
+        <svg width="13" height="13" viewBox="0 0 14 14" style="vertical-align:middle;margin-right:5px"><path d="M7 1v5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M4.2 2.8A5.5 5.5 0 107 13a5.5 5.5 0 003.6-9.5" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>Shut Down</button>
+    </div>
+  </div>
+
+  <!-- CONTEXT MENU -->
+  <div id="ctxMenu" class="ctx-menu" style="display:none">
+    <div class="ctx-item" onclick="WM.open('terminal');hideCtx()">Open Decode Terminal</div>
+    <div class="ctx-item" onclick="WM.open('map');hideCtx()">Open Sector Map</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="WM.arrange();hideCtx()">Arrange Windows</div>
+    <div class="ctx-sep"></div>
+    <div class="ctx-item" onclick="WM.open('settings');hideCtx()">Display Properties</div>
+  </div>
+
+  <div id="balloonStack"></div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
